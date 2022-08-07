@@ -4,6 +4,7 @@ import openfl.display.FPS;
 import flixel.FlxG;
 import flixel.FlxState;
 import openfl.filters.ShaderFilter;
+import flixel.addons.display.FlxShaderToyShader;
 
 class PlayState extends FlxState
 {
