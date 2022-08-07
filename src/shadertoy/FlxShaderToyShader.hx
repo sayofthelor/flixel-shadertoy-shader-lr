@@ -1,4 +1,4 @@
-package;
+package shadertoy;
 
 import flixel.FlxG;
 import flixel.input.mouse.FlxMouse;
