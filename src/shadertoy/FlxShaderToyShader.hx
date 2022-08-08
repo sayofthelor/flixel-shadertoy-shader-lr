@@ -100,7 +100,7 @@ class FlxShaderToyShader extends GraphicsShader
 	public function new(shaderToyFragment:String = "", w:Null<Float> = null, h:Null<Float> = null)
 	{
 		if (w == null) w = FlxG.camera.width;
-		if (h == null) h = FlxG.camera.height
+		if (h == null) h = FlxG.camera.height;
 		this.shaderToyFragment = shaderToyFragment.length > 0 ? shaderToyFragment : exampleShaderToyFragment;
 		collateFragmentSource();
 		super();
