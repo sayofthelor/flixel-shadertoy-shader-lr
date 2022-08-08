@@ -20,6 +20,7 @@ class ShaderToySprite extends FlxSprite {
         flt = FlxFilterFrames.fromFrames(frames, 0, 0, [new ShaderFilter(shadertoy)]);
     }
     public function removeShader():Void {
-        shadertoy = flt = null;
+        shadertoy = null;
+        flt = null;
     }
 }
