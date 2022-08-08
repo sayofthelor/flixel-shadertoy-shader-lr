@@ -97,13 +97,13 @@ class FlxShaderToyShader extends GraphicsShader
 		#pragma header
 
 	")
-	public function new(shaderToyFragment:String = "")
+	public function new(shaderToyFragment:String = "", w:Float = FlxG.camera.width, h:Float = FlxG.camera.height)
 	{
 		this.shaderToyFragment = shaderToyFragment.length > 0 ? shaderToyFragment : exampleShaderToyFragment;
 		collateFragmentSource();
 		super();
 		// init uniforms so they can be used
-		iResolution.value = [FlxG.camera.width, FlxG.camera.height, 0.0];
+		iResolution.value = [w, h, 0.0];
 		iTime.value = [0.0];
 		iTimeDelta.value = [0.0];
 		iFrame.value = [0.0];
