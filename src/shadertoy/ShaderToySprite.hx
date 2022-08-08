@@ -6,7 +6,7 @@ import flixel.FlxG;
 import openfl.filters.ShaderFilter;
 
 class ShaderToySprite extends FlxSprite {
-    public var shader:FlxShaderToyShader = null;
+    public var shadertoy:FlxShaderToyShader = null;
     var flt:FlxFilterFrames = null;
     override public function update(elapsed:Float):Void {
         if (shader != null) shader.update(elapsed, FlxG.mouse);
@@ -15,11 +15,11 @@ class ShaderToySprite extends FlxSprite {
     }
     public function setShader(shader:Null<FlxShaderToyShader> = null):Void {
         if (shader == null) return;
-        this.shader = shader;
-        shader.iResolution.value = [width, height];
-        flt = FlxFilterFrames.fromFrames(frames, 0, 0, new ShaderFilter([this.shader]));
+        shadertoy = shader;
+        shadertoy.iResolution.value = [width, height];
+        flt = FlxFilterFrames.fromFrames(frames, 0, 0, new ShaderFilter([shadertoy]));
     }
     public function removeShader():Void {
-        shader = flt = null;
+        shadertoy = flt = null;
     }
 }
