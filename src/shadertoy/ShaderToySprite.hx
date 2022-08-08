@@ -16,7 +16,7 @@ class ShaderToySprite extends FlxSprite {
     public function setShader(shader:Null<FlxShaderToyShader> = null):Void {
         if (shader == null) return;
         this.shader = shader;
-        shader.iResolution.values = [width, height];
+        shader.iResolution.value = [width, height];
         flt = FlxFilterFrames.fromFrames(frames, 0, 0, new ShaderFilter([this.shader]));
     }
     public function removeShader():Void {
