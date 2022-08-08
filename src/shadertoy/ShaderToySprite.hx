@@ -9,7 +9,7 @@ class ShaderToySprite extends FlxSprite {
     public var shadertoy:FlxShaderToyShader = null;
     var flt:FlxFilterFrames = null;
     override public function update(elapsed:Float):Void {
-        if (shader != null) shader.update(elapsed, FlxG.mouse);
+        if (shadertoy != null) shadertoy.update(elapsed, FlxG.mouse);
         if (flt != null) flt.applyToSprite(this, true, false);
         super.update(elapsed);
     }
@@ -17,7 +17,7 @@ class ShaderToySprite extends FlxSprite {
         if (shader == null) return;
         shadertoy = shader;
         shadertoy.iResolution.value = [width, height];
-        flt = FlxFilterFrames.fromFrames(frames, 0, 0, new ShaderFilter([shadertoy]));
+        flt = FlxFilterFrames.fromFrames(frames, 0, 0, [new ShaderFilter(shadertoy)]);
     }
     public function removeShader():Void {
         shadertoy = flt = null;
