@@ -5,12 +5,13 @@ import flixel.input.mouse.FlxMouse;
 import flixel.math.FlxPoint;
 #if FLX_DRAW_QUADS
 import openfl.display.GraphicsShader;
+import flixel.system.FlxAssets.FlxShader;
 
 /**
 	An alternate FlxGraphicsShader that enables easy use of Shadertoy glsl programs in haxe flixel
 	original https://github.com/HaxeFlixel/flixel/blob/dev/flixel/graphics/tile/FlxGraphicsShader.hx
 **/
-class FlxShaderToyShader extends GraphicsShader
+class FlxShaderToyShader extends FlxShader
 {
 	/**
 		copied from FlxGraphicsShader
@@ -40,44 +41,7 @@ class FlxShaderToyShader extends GraphicsShader
 	**/
 	@:glFragmentHeader("
 		// flixel specific uniforms
-		uniform bool hasTransform;
-		uniform bool hasColorTransform;
    	
-		// flixel specific texture2D
-		vec4 flixel_texture2D(sampler2D bitmap, vec2 coord)
-		{
-			vec4 color = texture2D(bitmap, coord);
-			if (!hasTransform)
-			{
-				return color;
-			}
-
-			if (color.a == 0.0)
-			{
-				return vec4(0.0, 0.0, 0.0, 0.0);
-			}
-
-			if (!hasColorTransform)
-			{
-				return color * openfl_Alphav;
-			}
-
-			color = vec4(color.rgb / color.a, color.a);
-
-			mat4 colorMultiplier = mat4(0);
-			colorMultiplier[0][0] = openfl_ColorMultiplierv.x;
-			colorMultiplier[1][1] = openfl_ColorMultiplierv.y;
-			colorMultiplier[2][2] = openfl_ColorMultiplierv.z;
-			colorMultiplier[3][3] = openfl_ColorMultiplierv.w;
-
-			color = clamp(openfl_ColorOffsetv + (color * colorMultiplier), 0.0, 1.0);
-
-			if (color.a > 0.0)
-			{
-				return vec4(color.rgb * color.a * openfl_Alphav, color.a * openfl_Alphav);
-			}
-			return vec4(0.0, 0.0, 0.0, 0.0);
-		}
 
 		// shader toy uniforms
         uniform vec3 iResolution;
