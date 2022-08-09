@@ -4,7 +4,6 @@ import flixel.FlxSprite;
 import flixel.FlxG;
 import openfl.filters.ShaderFilter;
 import flixel.FlxCamera;
-import flixel.math.FlxPoint;
 
 class ShaderToySprite extends FlxSprite {
     public var cam:FlxCamera = null;
@@ -16,16 +15,16 @@ class ShaderToySprite extends FlxSprite {
     override public function update(elapsed:Float):Void {
         if (shaderToy != null && cam != null) {
             shaderToy.update(elapsed, FlxG.mouse);
-            if (FlxG.render.blit)
-                pixels.copyPixels(cam.buffer, cam.rect, new FlxPoint());
+            if (FlxG.renderBlit)
+                pixels.copyPixels(cam.buffer, cam.rect, new openfl.geom.Point());
             else
                 pixels.draw(cam.canvas);
         }
         super.update(elapsed);
     }
     public function updateCam():Void {
-        cam.width = width;
-        cam.height = height;
+        cam.width = Std.int(width);
+        cam.height = Std.int(height);
     }
     public function setShader(shader:Null<FlxShaderToyShader>):Void {
         shaderToy = shader;
