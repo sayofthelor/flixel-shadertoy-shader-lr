@@ -9,7 +9,7 @@ import flixel.math.FlxPoint;
 class ShaderToySprite extends FlxSprite {
     public var cam:FlxCamera = null;
     public var shaderToy:FlxShaderToyShader = null;
-    override public function new(x:Float = 0, y:Float = 0, ?SimpleGraphic:Null<flixel.system.FlxGraphicAsset>) {
+    override public function new(x:Float = 0, y:Float = 0, ?SimpleGraphic:Null<flixel.util.typeLimit.OneOfThree<flixel.graphics.FlxGraphic, flash.display.BitmapData, String>>) {
         super(x, y, SimpleGraphic);
         cam = new FlxCamera(width, height);
     }
