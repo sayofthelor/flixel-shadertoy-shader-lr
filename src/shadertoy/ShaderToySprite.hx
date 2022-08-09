@@ -16,9 +16,9 @@ class ShaderToySprite extends FlxSprite {
         if (shaderToy != null && cam != null) {
             shaderToy.update(elapsed, FlxG.mouse);
             if (FlxG.renderBlit)
-                pixels.copyPixels(cam.buffer, cam.buffer.rect, new openfl.geom.Point());
+                this.pixels.copyPixels(cam.buffer, cam.buffer.rect, new openfl.geom.Point());
             else
-                pixels.draw(cam.canvas);
+                this.pixels.draw(cam.canvas);
         }
         super.update(elapsed);
     }
