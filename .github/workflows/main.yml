@@ -39,9 +39,8 @@ jobs:
       - name: Create Version Tag
         run: echo "${{github.run_id}}" > VERSION
       - name: Compile
-        run: |
-        cd sample
-        haxelib run lime build Project.xml html5 --app-version="4.0.0-${{ github.run_id}}"
+        run: cd ./sample/
+        run: haxelib run lime build Project.xml html5 --app-version="4.0.0-${{ github.run_id}}"
       - name: Deploy to Pages
         uses: JamesIves/github-pages-deploy-action@v4.3.3
         with:
