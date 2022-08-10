@@ -6,7 +6,7 @@ This allows use of glsl code from shadertoy in haxe flixel without needing to po
 ## Install
 
 ```shell
-haxelib git flixel-shadertoy-shader https://github.com/sayofthelor/flixel-shadertoy-shader-lr/
+haxelib git flixel-shadertoy-shader-lr https://github.com/sayofthelor/flixel-shadertoy-shader-lr/
 ```
 ## Use
 
