@@ -1,431 +1,94 @@
 package;
 
-import openfl.display.FPS;
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.FlxState;
-import openfl.filters.ShaderFilter;
+import flixel.text.FlxText;
+import flixel.util.FlxColor;
 import shadertoy.FlxShaderToyShader;
 
 class PlayState extends FlxState
 {
+	var shadedSprite:FlxSprite;
+	var shadingText:FlxText;
+
+	public static var thingArray:Array<String> = ['Road to Hell', 'fractal pyramid', 'Seascape', 'Pegasus Galaxy'];
+	public static var thingIndex:Int = 0;
+	public static var shaders:Map<String, Dynamic>;
+	public static var links:Map<String, String> = [
+		'Road to Hell' => ShaderStorage.roadToHell[1],
+		'fractal pyramid' => ShaderStorage.pyramids[1],
+		'Seascape' => ShaderStorage.seascape[1],
+		'Pegasus Galaxy' => ShaderStorage.galaxy[1]
+	];
+
 	override public function create()
 	{
-		displayInfo();
+		shadedSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xff000000);
+		shadedSprite.screenCenter();
+		shadingText = new FlxText(10, 10, FlxG.width - 20, "Press LEFT and RIGHT to cycle shaders \nShader: " + thingArray[thingIndex]);
+		shadingText.setFormat(24, FlxColor.WHITE, CENTER, OUTLINE, FlxColor.BLACK);
+		shadingText.borderSize = 2;
+		add(shadedSprite);
+		add(shadingText);
+		shaders = [
+			'Road to Hell' => new FlxShaderToyShader(ShaderStorage.roadToHell[0], shadedSprite.width, shadedSprite.height),
+			'fractal pyramid' => new FlxShaderToyShader(ShaderStorage.pyramids[0], shadedSprite.width, shadedSprite.height),
+			'Seascape' => new FlxShaderToyShader(ShaderStorage.seascape[0], shadedSprite.width, shadedSprite.height),
+			'Pegasus Galaxy' => new FlxShaderToyShader(ShaderStorage.galaxy[0], shadedSprite.width, shadedSprite.height)
+		];
+		setShader();
 		super.create();
-		setCameraShader();
+	}
+
+	private function setShader():Void
+	{
+		shadedSprite.shader = shaders[thingArray[thingIndex]];
+		shadingText.text = "FlxShaderToyShader-LR demo \nPress LEFT and RIGHT to cycle shaders \nShader: "
+			+ thingArray[thingIndex]
+			+ " \n("
+			+ links[thingArray[thingIndex]]
+			+ " || Press ENTER to go to link)";
+	}
+
+	private function changeSelection(r:Bool):Void
+	{
+		if (r)
+		{
+			thingIndex++;
+			if (thingIndex >= thingArray.length)
+			{
+				thingIndex = 0;
+			}
+		}
+		else
+		{
+			thingIndex--;
+			if (thingIndex < 0)
+			{
+				thingIndex = thingArray.length - 1;
+			}
+		}
+		setShader();
 	}
 
 	override public function update(elapsed:Float)
 	{
-		super.update(elapsed);
-
-		// IMPORTANT !!! call update on the shader
-		shader.update(elapsed, FlxG.mouse);
-		
-		// change active shader to previous/next with left/right arrow keys
-		if(FlxG.keys.justPressed.LEFT)
+		if (FlxG.keys.justPressed.LEFT || FlxG.keys.justPressed.RIGHT)
 		{
-			shaderIndex--;
-			if(shaderIndex < 0)
-				shaderIndex = shaders.length - 1;
-			setCameraShader();
+			changeSelection(FlxG.keys.justPressed.RIGHT);
 		}
-		
-		if(FlxG.keys.justPressed.RIGHT)
+		for (i in shaders.keys())
 		{
-			shaderIndex++;
-			if(shaderIndex > shaders.length -1)
-				shaderIndex = 0;
-			setCameraShader();
-		}
-	}
-
-	var shaderIndex:Int = 0;
-	var shader:FlxShaderToyShader;
-	function setCameraShader()
-	{
-		shader = shaders[shaderIndex]();
-		FlxG.camera.setFilters([new ShaderFilter(shader)]);
-		updateDisplayedInfo();
-	}
-
-	/** 
-		Collection of functions so we can easily change to different examples.
-		Each funtion returns a new instance of FlxShaderToyShader.
-	**/
-	var shaders:Array<Void -> FlxShaderToyShader> = [
-		// no shader passed in, loads default mainImage function as seen here - https://www.shadertoy.com/new
-		() -> new FlxShaderToyShader(),
-
-		// mainImage function passed in
-		() -> new FlxShaderToyShader('
-		void mainImage( out vec4 fragColor, in vec2 fragCoord )
-		{
-			float green = 1.0;
-			fragColor = vec4(0.0, green, 0.0, 1.0);
-		}
-		'),
-
-		// mainImage function in a class
-		() -> new TestNormalisedZeroToOne(),
-		() -> new TestMousePosition(),
-		() -> new TestMouseClick(),
-
-		// some more fun ones
-		() -> new Flame(),
-		() -> new CineShaderLava(),
-		() -> new JuliaSetRotationMatrix()
-
-	];
-
-	function displayInfo() {
-		FlxG.addChildBelowMouse(new FPS(10, 10, 0xffffff));
-		#if web
-		var openFlContainer = js.Browser.document.getElementById("openfl-content");
-		openFlContainer.style.float = "left";
-		openFlContainer.style.marginRight = "15px";
-		var infoContainer = js.Browser.document.createDivElement();
-		infoContainer.style.display = "table";
-		js.Browser.document.body.appendChild(infoContainer);
-		var help = js.Browser.document.createParagraphElement();
-		help.innerText = "left/right arrow keys change active shader";
-		infoContainer.appendChild(help);
-		var shaderText = js.Browser.document.createParagraphElement();
-		shaderText.id = "shader-program";
-		shaderText.style.fontFamily = "monospace";
-		shaderText.style.overflowY = "auto";
-		shaderText.style.position = "absolute";
-		shaderText.style.height = "90%";
-		infoContainer.appendChild(shaderText);
-		#end
-	}
-
-	function updateDisplayedInfo() {
-		#if web
-		var shaderText = js.Browser.document.getElementById("shader-program");
-		shaderText.innerText = shader.shaderToyFragment;
-		#end
-	}
-}
-
-class TestNormalisedZeroToOne extends FlxShaderToyShader
-{
-	// testing fragCoord and iResolution are correctly translated
-	// should look same as first image in this post - https://stackoverflow.com/a/58691860
-	public function new()
-	{
-		super('
-		void mainImage( out vec4 fragColor, in vec2 fragCoord )
-		{
-			// Normalized pixel coordinates (from 0 to 1)
-			vec2 uv = fragCoord/iResolution.xy;
-
-			vec3 col = vec3(uv.x, uv.y, 0.0);
-
-			fragColor = vec4(col, 1.0);
-		}
-		');
-	}
-}
-
-
-class TestMousePosition extends FlxShaderToyShader
-{
-	public function new()
-	{
-		super('
-		// see #27 here - https://www.shadertoy.com/view/Md23DV
-		// MOUSE INPUT
-		//
-		// ShaderToy gives the mouse cursor coordinates and button clicks
-		// as an input via the iMouse vec4.
-		//
-		// The little disk will follow the cursor.
-		// The x coordinate of the cursor changes the background color.
-		// And if the cursor is inside the bigger disk, its color will change.
-		
-		float disk(vec2 r, vec2 center, float radius) {
-			return 1.0 - smoothstep( radius-0.5, radius+0.5, length(r-center));
-		}
-
-		void mainImage( out vec4 fragColor, in vec2 fragCoord )
-		{
-			vec2 p = vec2(fragCoord.xy / iResolution.xy);
-			vec2 r =  2.0*vec2(fragCoord.xy - 0.5*iResolution.xy)/iResolution.y;
-			float xMax = iResolution.x/iResolution.y;
-			
-			// background color depends on the x coordinate of the cursor
-			vec3 bgCol = vec3(iMouse.x / iResolution.x);
-			vec3 col1 = vec3(0.216, 0.471, 0.698); // blue
-			vec3 col2 = vec3(1.00, 0.329, 0.298); // yellow
-			vec3 col3 = vec3(0.867, 0.910, 0.247); // red
-			
-			vec3 ret = bgCol;
-			
-			vec2 center;
-			// draw the big yellow disk
-			center = vec2(100., iResolution.y/2.);
-			float radius = 60.;
-			// if the cursor coordinates is inside the disk
-			if( length(iMouse.xy-center)>radius ) {
-				// use color3
-				ret = mix(ret, col3, disk(fragCoord.xy, center, radius));
-			}
-			else {
-				// else use color2
-				ret = mix(ret, col2, disk(fragCoord.xy, center, radius));
-			}	
-			
-			// draw the small blue disk at the cursor
-			center = iMouse.xy;
-			ret = mix(ret, col1, disk(fragCoord.xy, center, 20.));
-			
-			vec3 pixel = ret;
-			fragColor = vec4(pixel, 1.0);
-		}
-		');
-	}
-}
-
-class TestMouseClick extends FlxShaderToyShader
-{
-	public function new()
-	{
-		super('
-		// see https://www.shadertoy.com/view/lssGzH
-
-		// a dumb test shader to see how iMouse works
-		// click and drag the mouse
-		
-		float smoothbump(float center, float width, float x) {
-		  float w2 = width/2.0;
-		  float cp = center+w2;
-		  float cm = center-w2;
-		  float c = smoothstep(cm, center, x) * (1.0-smoothstep(center, cp, x));
-		  return c;
-		}
-		
-		void mainImage( out vec4 fragColor, in vec2 fragCoord ) {
-		  vec2  uv = (fragCoord.xy / iResolution.xy);
-		  vec4  m  = iMouse / iResolution.xyxy;
-		  float m0 = (m.z > 0.0) ? 0.25 : 0.0;
-		  float m1 = smoothbump(m.x,0.05,uv.x) *
-					 smoothbump(m.y,0.05,uv.y);
-		  float m2 = smoothbump(abs(m.z),0.05,uv.x) *
-					 smoothbump(abs(m.w),0.05,uv.y);
-		  fragColor = vec4(m1,m0,m2,1.0);
-		}
-		');
-	}
-}
-
-
-class Flame extends FlxShaderToyShader
-{
-	// see https://www.shadertoy.com/view/MdX3zr
-	public function new()
-	{
-		super('
-		// Created by anatole duprat - XT95/2013
-		// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
-
-		float noise(vec3 p) //Thx to Las^Mercury
-		{
-			vec3 i = floor(p);
-			vec4 a = dot(i, vec3(1., 57., 21.)) + vec4(0., 57., 21., 78.);
-			vec3 f = cos((p-i)*acos(-1.))*(-.5)+.5;
-			a = mix(sin(cos(a)*a),sin(cos(1.+a)*(1.+a)), f.x);
-			a.xy = mix(a.xz, a.yw, f.y);
-			return mix(a.x, a.y, f.z);
-		}
-
-		float sphere(vec3 p, vec4 spr)
-		{
-			return length(spr.xyz-p) - spr.w;
-		}
-
-		float flame(vec3 p)
-		{
-			float d = sphere(p*vec3(1.,.5,1.), vec4(.0,-1.,.0,1.));
-			return d + (noise(p+vec3(.0,iTime*2.,.0)) + noise(p*3.)*.5)*.25*(p.y) ;
-		}
-
-		float scene(vec3 p)
-		{
-			return min(100.-length(p) , abs(flame(p)) );
-		}
-
-		vec4 raymarch(vec3 org, vec3 dir)
-		{
-			float d = 0.0, glow = 0.0, eps = 0.02;
-			vec3  p = org;
-			bool glowed = false;
-			
-			for(int i=0; i<64; i++)
+			if (shadedSprite.shader == shaders[i])
 			{
-				d = scene(p) + eps;
-				p += d * dir;
-				if( d>eps )
-				{
-					if(flame(p) < .0)
-						glowed=true;
-					if(glowed)
-						glow = float(i)/64.;
-				}
+				shaders[i].update(elapsed, FlxG.mouse);
 			}
-			return vec4(p,glow);
 		}
-
-		void mainImage( out vec4 fragColor, in vec2 fragCoord )
+		if (FlxG.keys.justPressed.ENTER)
 		{
-			vec2 v = -1.0 + 2.0 * fragCoord.xy / iResolution.xy;
-			v.x *= iResolution.x/iResolution.y;
-			
-			vec3 org = vec3(0., -2., 4.);
-			vec3 dir = normalize(vec3(v.x*1.6, -v.y, -1.5));
-			
-			vec4 p = raymarch(org, dir);
-			float glow = p.w;
-			
-			vec4 col = mix(vec4(1.,.5,.1,1.), vec4(0.1,.5,1.,1.), p.y*.02+.4);
-			
-			fragColor = mix(vec4(0.), col, pow(glow*2.,4.));
-			//fragColor = mix(vec4(1.), mix(vec4(1.,.5,.1,1.),vec4(0.1,.5,1.,1.),p.y*.02+.4), pow(glow*2.,4.));
-
+			FlxG.openURL(links[thingArray[thingIndex]]);
 		}
-		');
-	}
-}
-
-class CineShaderLava extends FlxShaderToyShader
-{
-	// see https://www.shadertoy.com/view/3sySRK
-	public function new()
-	{
-		super('
-		float opSmoothUnion( float d1, float d2, float k )
-		{
-			float h = clamp( 0.5 + 0.5*(d2-d1)/k, 0.0, 1.0 );
-			return mix( d2, d1, h ) - k*h*(1.0-h);
-		}
-		
-		float sdSphere( vec3 p, float s )
-		{
-		  return length(p)-s;
-		} 
-		
-		float map(vec3 p)
-		{
-			float d = 2.0;
-			for (int i = 0; i < 16; i++) {
-				float fi = float(i);
-				float time = iTime * (fract(fi * 412.531 + 0.513) - 0.5) * 2.0;
-				d = opSmoothUnion(
-					sdSphere(p + sin(time + fi * vec3(52.5126, 64.62744, 632.25)) * vec3(2.0, 2.0, 0.8), mix(0.5, 1.0, fract(fi * 412.531 + 0.5124))),
-					d,
-					0.4
-				);
-			}
-			return d;
-		}
-		
-		vec3 calcNormal( in vec3 p )
-		{
-			const float h = 1e-5; // or some other value
-			const vec2 k = vec2(1,-1);
-			return normalize( k.xyy*map( p + k.xyy*h ) + 
-							  k.yyx*map( p + k.yyx*h ) + 
-							  k.yxy*map( p + k.yxy*h ) + 
-							  k.xxx*map( p + k.xxx*h ) );
-		}
-		
-		void mainImage( out vec4 fragColor, in vec2 fragCoord )
-		{
-			vec2 uv = fragCoord/iResolution.xy;
-			
-			// screen size is 6m x 6m
-			vec3 rayOri = vec3((uv - 0.5) * vec2(iResolution.x/iResolution.y, 1.0) * 6.0, 3.0);
-			vec3 rayDir = vec3(0.0, 0.0, -1.0);
-			
-			float depth = 0.0;
-			vec3 p;
-			
-			for(int i = 0; i < 64; i++) {
-				p = rayOri + rayDir * depth;
-				float dist = map(p);
-				depth += dist;
-				if (dist < 1e-6) {
-					break;
-				}
-			}
-			
-			depth = min(6.0, depth);
-			vec3 n = calcNormal(p);
-			float b = max(0.0, dot(n, vec3(0.577)));
-			vec3 col = (0.5 + 0.5 * cos((b + iTime * 3.0) + uv.xyx * 2.0 + vec3(0,2,4))) * (0.85 + b * 0.35);
-			col *= exp( -depth * 0.15 );
-			
-			// maximum thickness is 2m in alpha channel
-			fragColor = vec4(col, 1.0 - (depth - 0.5) / 2.0);
-		}
-		
-		/** SHADERDATA
-		{
-			"title": "My Shader 0",
-			"description": "Lorem ipsum dolor",
-			"model": "person"
-		}
-		*/
-		');
-	}
-}
-
-class JuliaSetRotationMatrix extends FlxShaderToyShader
-{
-	// see https://www.shadertoy.com/view/fsBGRG
-	public function new()
-	{
-		super('
-		#define ITR 100
-		#define PI 3.1415926
-		
-		mat2 rot(float a){
-			float c=cos(a);
-			float s=sin(a);
-			return mat2(c,-s,s,c);
-		}
-		
-		vec2 pmod(vec2 p,float n){
-			float np=PI*2.0/n;
-			float r=atan(p.x,p.y)-0.5*np;
-			r=mod(r,np)-0.5*np;
-			return length(p)*vec2(cos(r),sin(r));
-		}
-		
-		float julia(vec2 uv){
-			int j;
-			for(int i=0;i<ITR;i++){
-				j++;
-				vec2 c=vec2(-0.345,0.654);
-				vec2 d=vec2(iTime*0.005,0.0);
-				uv=vec2(uv.x*uv.x-uv.y*uv.y,2.0*uv.x*uv.y)+c+d;
-				if(length(uv)>float(ITR)){
-					break;
-				}
-			}
-			return float(j)/float(ITR);
-		}
-		
-		void mainImage(out vec4 fragColor,in vec2 fragCoord){
-			vec2 uv=(2.0*fragCoord.xy-iResolution.xy)/iResolution.y;
-		
-			uv.xy*=rot(iTime*0.5);
-			//uv=pmod(uv.xy,6.0);
-			uv*=abs(sin(iTime*0.2));
-			float f=julia(uv);
-		
-			fragColor=vec4(f-0.4,(f-(fract(iTime*0.1))),f,1.0);
-		}
-		');
+		super.update(elapsed);
 	}
 }

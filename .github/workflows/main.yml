@@ -1,29 +1,49 @@
-name: CI
+name: Build and Deploy
 
-on: [push, pull_request, repository_dispatch]
+permissions:
+  contents: write
 
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  build:
+  buildHTML5:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        persist-credentials: false
-    - uses: lix-pm/setup-lix@master
-    - uses: HaxeFlixel/setup-flixel@master
-      with:
-        haxe-version: stable
-        flixel-versions: release
-        target: html5
-    - name: Setup
-      run: haxelib dev flixel-shadertoy-shader .
-    - name: Build
-      working-directory: ./sample
-      run: haxelib run lime build html5 -final
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{secrets.GITHUB_TOKEN}}
-        publish_dir: ./sample/export/html5/bin
-        force_orphan: true
-      if: github.ref == 'refs/heads/master'
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.2.0
+      # Runs a set of commands using the runners shell
+      - name: Install Haxelib
+        run: |
+          haxelib setup ~/haxelib
+          haxelib install hxcpp > /dev/null
+          haxelib install lime
+          haxelib install openfl
+          haxelib install flixel
+          haxelib run lime setup flixel
+          haxelib run lime setup
+          haxelib git flixel-shadertoy-shader-lr http://github.com/sayofthelor/flixel-shadertoy-shader-lr
+      - name: Create Version Tag
+        run: echo "${{github.run_id}}" > VERSION
+      - name: Compile
+        run: |
+        cd sample
+        haxelib run lime build Project.xml html5 --app-version="4.0.0-${{ github.run_id}}"
+      - name: Deploy to Pages
+        uses: JamesIves/github-pages-deploy-action@v4.3.3
+        with:
+          branch: web-build # The branch the action should deploy to.
+          folder: 'sample/export/html5/bin' # The folder the action should deploy.

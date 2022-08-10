@@ -16,7 +16,11 @@ Reference in project.xml
 <haxelib name="flixel-shadertoy-shader-lr" />
 ```
 
-### Examples
+## Examples
 
 Check the `sample` directory in this repo for a flixel project using this.
+
+## Demo
+
+Demo at http://shaderdemo.beanabean.me/
 
