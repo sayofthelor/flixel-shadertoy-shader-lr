@@ -13,7 +13,7 @@ haxelib git flixel-shadertoy-shader https://github.com/sayofthelor/flixel-shader
 Reference in project.xml
 
 ```xml
-<haxelib name="flixel-shadertoy-shader" />
+<haxelib name="flixel-shadertoy-shader-lr" />
 ```
 
 ### Examples
