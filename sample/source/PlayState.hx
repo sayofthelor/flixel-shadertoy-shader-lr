@@ -6,11 +6,14 @@ import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import shadertoy.FlxShaderToyShader;
+import shadertoy.FlxShaderToyRuntimeShader;
+import openfl.utils.Assets;
 
 class PlayState extends FlxState
 {
 	var shadedSprite:FlxSprite;
 	var shadingText:FlxText;
+	var shaderInfo:Array<String>;
 
 	public static var thingArray:Array<String> = ['Road to Hell', 'fractal pyramid', 'Seascape', 'Pegasus Galaxy'];
 	public static var thingIndex:Int = 0;
@@ -24,6 +27,9 @@ class PlayState extends FlxState
 
 	override public function create()
 	{
+		shaderInfo = Assets.getText("assets/data/shaderInfo.txt").split("\n");
+		thingArray.push(shaderInfo[0]);
+		links.set(shaderInfo[0], shaderInfo[1]);
 		shadedSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xff000000);
 		shadedSprite.screenCenter();
 		shadingText = new FlxText(10, 10, FlxG.width - 20, "Press LEFT and RIGHT to cycle shaders \nShader: " + thingArray[thingIndex]);
@@ -35,7 +41,8 @@ class PlayState extends FlxState
 			'Road to Hell' => new FlxShaderToyShader(ShaderStorage.roadToHell[0], shadedSprite.width, shadedSprite.height),
 			'fractal pyramid' => new FlxShaderToyShader(ShaderStorage.pyramids[0], shadedSprite.width, shadedSprite.height),
 			'Seascape' => new FlxShaderToyShader(ShaderStorage.seascape[0], shadedSprite.width, shadedSprite.height),
-			'Pegasus Galaxy' => new FlxShaderToyShader(ShaderStorage.galaxy[0], shadedSprite.width, shadedSprite.height)
+			'Pegasus Galaxy' => new FlxShaderToyShader(ShaderStorage.galaxy[0], shadedSprite.width, shadedSprite.height),
+			shaderInfo[0] => new FlxShaderToyRuntimeShader(Assets.getText("assets/data/shader.frag"), shadedSprite.width, shadedSprite.height)
 		];
 		setShader();
 		super.create();
@@ -46,7 +53,8 @@ class PlayState extends FlxState
 		shadedSprite.shader = shaders[thingArray[thingIndex]];
 		shadingText.text = "FlxShaderToyShader-LR demo \nPress LEFT and RIGHT to cycle shaders \nShader: "
 			+ thingArray[thingIndex]
-			+ " \n("
+			+ (thingArray[thingIndex] == shaderInfo[0] ? "\nThis shader is compiled at runtime!\nTo change it, edit shader.frag in assets/data/" : "")
+			+ "\n("
 			+ links[thingArray[thingIndex]]
 			+ " || Press ENTER to go to link)";
 	}

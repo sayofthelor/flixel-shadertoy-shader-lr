@@ -1,6 +1,6 @@
 {
-    "name": "flixel-shadertoy-shader",
-    "url": "https://github.com/jobf/flixel-shadertoy-shader/",
+    "name": "FlxShaderToy",
+    "url": "https://github.com/sayofthelor/flixel-shadertoy-shader-lr",
     "license": "MIT",
     "tags": [
         "flixel",
@@ -12,7 +12,9 @@
     "classPath": "src/",
     "releasenote": "Initial release, does not have the complete set of shadertoy uniforms yet.",
     "contributors": [
-        "jobf"
+        "jobf",
+        "sayofthelor",
+        "MasterEric"
     ],
     "dependencies": {
         "lime": "",
