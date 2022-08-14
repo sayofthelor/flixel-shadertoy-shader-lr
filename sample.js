@@ -919,7 +919,7 @@ ApplicationMain.create = function(config) {
 	app.meta.h["name"] = "sample";
 	app.meta.h["packageName"] = "com.example.myapp";
 	app.meta.h["version"] = "0.0.1";
-	var attributes = { allowHighDPI : false, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 0, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : false, title : "sample", width : 0, x : null, y : null};
+	var attributes = { allowHighDPI : false, alwaysOnTop : false, borderless : false, element : null, frameRate : 60, height : 720, hidden : false, maximized : false, minimized : false, parameters : { }, resizable : false, title : "sample", width : 1280, x : null, y : null};
 	attributes.context = { antialiasing : 0, background : 0, colorDepth : 32, depth : true, hardware : true, stencil : true, type : null, vsync : false};
 	if(app.__window == null) {
 		if(config != null) {
@@ -3593,7 +3593,7 @@ ManifestResources.init = function(config) {
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$nokiafc22_$ttf);
 	openfl_text_Font.registerFont(_$_$ASSET_$_$OPENFL_$_$flixel_$fonts_$monsterrat_$ttf);
 	var bundle;
-	var data = "{\"name\":null,\"assets\":\"aoy4:sizei39706y4:typey5:MUSICy2:idy28:flixel%2Fsounds%2Fflixel.mp3y9:pathGroupaR4y28:flixel%2Fsounds%2Fflixel.ogghy7:preloadtgoR0i2114R1R2R3y26:flixel%2Fsounds%2Fbeep.mp3R5aR8y26:flixel%2Fsounds%2Fbeep.ogghR7tgoR0i33629R1y5:SOUNDR3R6R5aR4R6hgoR0i5794R1R10R3R9R5aR8R9hgoR0i15744R1y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR3y30:flixel%2Ffonts%2Fnokiafc22.ttfR7tgoR0i29724R1R11R12y36:__ASSET__flixel_fonts_monsterrat_ttfR3y31:flixel%2Ffonts%2Fmonsterrat.ttfR7tgoy4:pathy33:flixel%2Fimages%2Fui%2Fbutton.pngR0i519R1y5:IMAGER3R18R7tgoR17y36:flixel%2Fimages%2Flogo%2Fdefault.pngR0i3280R1R19R3R20R7tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
+	var data = "{\"name\":null,\"assets\":\"aoy4:pathy30:assets%2Fdata%2FshaderInfo.txty4:sizei53y4:typey4:TEXTy2:idR1y7:preloadtgoR0y27:assets%2Fdata%2Fshader.fragR2i6188R3R4R5R7R6tgoR2i39706R3y5:MUSICR5y28:flixel%2Fsounds%2Fflixel.mp3y9:pathGroupaR9y28:flixel%2Fsounds%2Fflixel.ogghR6tgoR2i2114R3R8R5y26:flixel%2Fsounds%2Fbeep.mp3R10aR12y26:flixel%2Fsounds%2Fbeep.ogghR6tgoR2i33629R3y5:SOUNDR5R11R10aR9R11hgoR2i5794R3R14R5R13R10aR12R13hgoR2i15744R3y4:FONTy9:classNamey35:__ASSET__flixel_fonts_nokiafc22_ttfR5y30:flixel%2Ffonts%2Fnokiafc22.ttfR6tgoR2i29724R3R15R16y36:__ASSET__flixel_fonts_monsterrat_ttfR5y31:flixel%2Ffonts%2Fmonsterrat.ttfR6tgoR0y33:flixel%2Fimages%2Fui%2Fbutton.pngR2i519R3y5:IMAGER5R21R6tgoR0y36:flixel%2Fimages%2Flogo%2Fdefault.pngR2i3280R3R22R5R23R6tgh\",\"rootPath\":null,\"version\":2,\"libraryArgs\":[],\"libraryType\":null}";
 	var manifest = lime_utils_AssetManifest.parse(data,ManifestResources.rootPath);
 	var library = lime_utils_AssetLibrary.fromManifest(manifest);
 	lime_utils_Assets.registerLibrary("default",library);
@@ -4706,7 +4706,11 @@ PlayState.__super__ = flixel_FlxState;
 PlayState.prototype = $extend(flixel_FlxState.prototype,{
 	shadedSprite: null
 	,shadingText: null
+	,shaderInfo: null
 	,create: function() {
+		this.shaderInfo = openfl_utils_Assets.getText("assets/data/shaderInfo.txt").split("\n");
+		PlayState.thingArray.push(this.shaderInfo[0]);
+		PlayState.links.h[this.shaderInfo[0]] = this.shaderInfo[1];
 		this.shadedSprite = new flixel_FlxSprite().makeGraphic(flixel_FlxG.width,flixel_FlxG.height,-16777216);
 		var _this = this.shadedSprite;
 		var axes = flixel_util_FlxAxes.XY;
@@ -4746,13 +4750,16 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 		_g.h["Seascape"] = value;
 		var value = new shadertoy_FlxShaderToyShader(ShaderStorage.galaxy[0],this.shadedSprite.get_width(),this.shadedSprite.get_height());
 		_g.h["Pegasus Galaxy"] = value;
+		var key = this.shaderInfo[0];
+		var value = new shadertoy_FlxShaderToyRuntimeShader(openfl_utils_Assets.getText("assets/data/shader.frag"),this.shadedSprite.get_width(),this.shadedSprite.get_height());
+		_g.h[key] = value;
 		PlayState.shaders = _g;
 		this.setShader();
 		flixel_FlxState.prototype.create.call(this);
 	}
 	,setShader: function() {
 		this.shadedSprite.shader = PlayState.shaders.h[PlayState.thingArray[PlayState.thingIndex]];
-		this.shadingText.set_text("FlxShaderToyShader-LR demo \nPress LEFT and RIGHT to cycle shaders \nShader: " + PlayState.thingArray[PlayState.thingIndex] + " \n(" + PlayState.links.h[PlayState.thingArray[PlayState.thingIndex]] + " || Press ENTER to go to link)");
+		this.shadingText.set_text("FlxShaderToyShader-LR demo \nPress LEFT and RIGHT to cycle shaders \nShader: " + PlayState.thingArray[PlayState.thingIndex] + (PlayState.thingArray[PlayState.thingIndex] == this.shaderInfo[0] ? "\nThis shader is compiled at runtime!\nTo change it, edit shader.frag in assets/data/" : "") + "\n(" + PlayState.links.h[PlayState.thingArray[PlayState.thingIndex]] + " || Press ENTER to go to link)");
 	}
 	,changeSelection: function(r) {
 		if(r) {
@@ -68562,7 +68569,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 487644;
+	this.version = 936430;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
@@ -115641,6 +115648,522 @@ openfl_utils__$internal_TouchData.prototype = {
 	}
 	,__class__: openfl_utils__$internal_TouchData
 };
+var shadertoy_FlxRuntimeShader = function(fragmentSource,vertexSource,glslVersion) {
+	if(glslVersion == null) {
+		glslVersion = 120;
+	}
+	this.__fieldList = null;
+	if(this.__glFragmentSource == null) {
+		this.__glFragmentSource = "\n\t\tvarying float openfl_Alphav;\n\t\tvarying vec4 openfl_ColorMultiplierv;\n\t\tvarying vec4 openfl_ColorOffsetv;\n\t\tvarying vec2 openfl_TextureCoordv;\n\n\t\tuniform bool openfl_HasColorTransform;\n\t\tuniform vec2 openfl_TextureSize;\n\t\tuniform sampler2D bitmap;\n\n\t\tuniform bool hasTransform;\n\t\tuniform bool hasColorTransform;\n\n\t\tvec4 flixel_texture2D(sampler2D bitmap, vec2 coord)\n\t\t{\n\t\t\tvec4 color = texture2D(bitmap, coord);\n\t\t\tif (!hasTransform)\n\t\t\t{\n\t\t\t\treturn color;\n\t\t\t}\n\n\t\t\tif (color.a == 0.0)\n\t\t\t{\n\t\t\t\treturn vec4(0.0, 0.0, 0.0, 0.0);\n\t\t\t}\n\n\t\t\tif (!hasColorTransform)\n\t\t\t{\n\t\t\t\treturn color * openfl_Alphav;\n\t\t\t}\n\n\t\t\tcolor = vec4(color.rgb / color.a, color.a);\n\n\t\t\tmat4 colorMultiplier = mat4(0);\n\t\t\tcolorMultiplier[0][0] = openfl_ColorMultiplierv.x;\n\t\t\tcolorMultiplier[1][1] = openfl_ColorMultiplierv.y;\n\t\t\tcolorMultiplier[2][2] = openfl_ColorMultiplierv.z;\n\t\t\tcolorMultiplier[3][3] = openfl_ColorMultiplierv.w;\n\n\t\t\tcolor = clamp(openfl_ColorOffsetv + (color * colorMultiplier), 0.0, 1.0);\n\n\t\t\tif (color.a > 0.0)\n\t\t\t{\n\t\t\t\treturn vec4(color.rgb * color.a * openfl_Alphav, color.a * openfl_Alphav);\n\t\t\t}\n\t\t\treturn vec4(0.0, 0.0, 0.0, 0.0);\n\t\t}\n\t\n\n\t\t\n\t\tvoid main(void)\n\t\t{\n\t\t\tgl_FragColor = flixel_texture2D(bitmap, openfl_TextureCoordv);\n\t\t}";
+	}
+	if(this.__glVertexSource == null) {
+		this.__glVertexSource = "\n\t\tattribute float openfl_Alpha;\n\t\tattribute vec4 openfl_ColorMultiplier;\n\t\tattribute vec4 openfl_ColorOffset;\n\t\tattribute vec4 openfl_Position;\n\t\tattribute vec2 openfl_TextureCoord;\n\n\t\tvarying float openfl_Alphav;\n\t\tvarying vec4 openfl_ColorMultiplierv;\n\t\tvarying vec4 openfl_ColorOffsetv;\n\t\tvarying vec2 openfl_TextureCoordv;\n\n\t\tuniform mat4 openfl_Matrix;\n\t\tuniform bool openfl_HasColorTransform;\n\t\tuniform vec2 openfl_TextureSize;\n\n\t\t\n\t\tattribute float alpha;\n\t\tattribute vec4 colorMultiplier;\n\t\tattribute vec4 colorOffset;\n\t\tuniform bool hasColorTransform;\n\t\t\n\t\tvoid main(void)\n\t\t{\n\t\t\topenfl_Alphav = openfl_Alpha;\n\t\topenfl_TextureCoordv = openfl_TextureCoord;\n\n\t\tif (openfl_HasColorTransform) {\n\n\t\t\topenfl_ColorMultiplierv = openfl_ColorMultiplier;\n\t\t\topenfl_ColorOffsetv = openfl_ColorOffset / 255.0;\n\n\t\t}\n\n\t\tgl_Position = openfl_Matrix * openfl_Position;\n\n\t\t\t\n\t\t\topenfl_Alphav = openfl_Alpha * alpha;\n\t\t\t\n\t\t\tif (hasColorTransform)\n\t\t\t{\n\t\t\t\topenfl_ColorOffsetv = colorOffset / 255.0;\n\t\t\t\topenfl_ColorMultiplierv = colorMultiplier;\n\t\t\t}\n\t\t}";
+	}
+	this._glslVersion = glslVersion;
+	if(fragmentSource == null) {
+		haxe_Log.trace("Loading default fragment source...",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 205, className : "shadertoy.FlxRuntimeShader", methodName : "new"});
+		this.set_glFragmentSource(this.processFragmentSource(shadertoy_FlxRuntimeShader.DEFAULT_FRAGMENT_SOURCE));
+	} else {
+		haxe_Log.trace("Loading fragment source from argument...",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 210, className : "shadertoy.FlxRuntimeShader", methodName : "new"});
+		this.set_glFragmentSource(this.processFragmentSource(fragmentSource));
+	}
+	if(vertexSource == null) {
+		var s = this.processVertexSource(shadertoy_FlxRuntimeShader.DEFAULT_VERTEX_SOURCE);
+		this.set_glVertexSource(s);
+	} else {
+		var s = this.processVertexSource(vertexSource);
+		this.set_glVertexSource(s);
+	}
+	this.__glSourceDirty = true;
+	this.__isGenerated = false;
+	flixel_graphics_tile_FlxGraphicsShader.call(this);
+	this.__isGenerated = true;
+	this.__initGL();
+};
+$hxClasses["shadertoy.FlxRuntimeShader"] = shadertoy_FlxRuntimeShader;
+shadertoy_FlxRuntimeShader.__name__ = "shadertoy.FlxRuntimeShader";
+shadertoy_FlxRuntimeShader.__super__ = flixel_graphics_tile_FlxGraphicsShader;
+shadertoy_FlxRuntimeShader.prototype = $extend(flixel_graphics_tile_FlxGraphicsShader.prototype,{
+	_glslVersion: null
+	,processFragmentSource: function(input) {
+		var result = StringTools.replace(input,shadertoy_FlxRuntimeShader.PRAGMA_HEADER,shadertoy_FlxRuntimeShader.BASE_FRAGMENT_HEADER);
+		result = StringTools.replace(result,shadertoy_FlxRuntimeShader.PRAGMA_BODY,shadertoy_FlxRuntimeShader.BASE_FRAGMENT_BODY);
+		return result;
+	}
+	,processVertexSource: function(input) {
+		var result = StringTools.replace(input,shadertoy_FlxRuntimeShader.PRAGMA_HEADER,shadertoy_FlxRuntimeShader.BASE_VERTEX_HEADER);
+		result = StringTools.replace(result,shadertoy_FlxRuntimeShader.PRAGMA_BODY,shadertoy_FlxRuntimeShader.BASE_VERTEX_BODY);
+		return result;
+	}
+	,buildPrecisionHeaders: function() {
+		return "#ifdef GL_ES\n\t\t\t\t" + (this.precisionHint == 1 ? "#ifdef GL_FRAGMENT_PRECISION_HIGH\n\t\t\t\t\tprecision highp float;\n\t\t\t\t#else\n\t\t\t\t\tprecision mediump float;\n\t\t\t\t#endif" : "precision lowp float;") + "\n\t\t\t\t#endif\n\t\t\t\t";
+	}
+	,__initGL: function() {
+		if(this.__glSourceDirty || this.__paramBool == null) {
+			this.__glSourceDirty = false;
+			this.program = null;
+			this.__inputBitmapData = [];
+			this.__paramBool = [];
+			this.__paramFloat = [];
+			this.__paramInt = [];
+			this.__processGLData(this.get_glVertexSource(),"attribute");
+			this.__processGLData(this.get_glVertexSource(),"uniform");
+			this.__processGLData(this.get_glFragmentSource(),"uniform");
+		}
+		if(this.__context != null && this.program == null) {
+			var gl = this.__context.gl;
+			var precisionHeaders = this.buildPrecisionHeaders();
+			var versionHeader = "#version " + this._glslVersion + "\n";
+			var vertex = StringTools.replace(this.get_glVertexSource(),shadertoy_FlxRuntimeShader.PRAGMA_PRECISION,precisionHeaders);
+			vertex = StringTools.replace(vertex,shadertoy_FlxRuntimeShader.PRAGMA_VERSION,versionHeader);
+			var fragment = StringTools.replace(this.get_glFragmentSource(),shadertoy_FlxRuntimeShader.PRAGMA_PRECISION,precisionHeaders);
+			fragment = StringTools.replace(fragment,shadertoy_FlxRuntimeShader.PRAGMA_VERSION,versionHeader);
+			var id = vertex + fragment;
+			if(Object.prototype.hasOwnProperty.call(this.__context.__programs.h,id)) {
+				this.program = this.__context.__programs.h[id];
+			} else {
+				this.program = this.__context.createProgram(1);
+				this.program.__glProgram = this.__createGLProgram(vertex,fragment);
+				this.__context.__programs.h[id] = this.program;
+			}
+			if(this.program != null) {
+				this.glProgram = this.program.__glProgram;
+				var _g = 0;
+				var _g1 = this.__inputBitmapData;
+				while(_g < _g1.length) {
+					var input = _g1[_g];
+					++_g;
+					if(input.__isUniform) {
+						input.index = gl.getUniformLocation(this.glProgram,input.name);
+					} else {
+						input.index = gl.getAttribLocation(this.glProgram,input.name);
+					}
+				}
+				var _g = 0;
+				var _g1 = this.__paramBool;
+				while(_g < _g1.length) {
+					var parameter = _g1[_g];
+					++_g;
+					if(parameter.__isUniform) {
+						parameter.index = gl.getUniformLocation(this.glProgram,parameter.name);
+					} else {
+						parameter.index = gl.getAttribLocation(this.glProgram,parameter.name);
+					}
+				}
+				var _g = 0;
+				var _g1 = this.__paramFloat;
+				while(_g < _g1.length) {
+					var parameter = _g1[_g];
+					++_g;
+					if(parameter.__isUniform) {
+						parameter.index = gl.getUniformLocation(this.glProgram,parameter.name);
+					} else {
+						parameter.index = gl.getAttribLocation(this.glProgram,parameter.name);
+					}
+				}
+				var _g = 0;
+				var _g1 = this.__paramInt;
+				while(_g < _g1.length) {
+					var parameter = _g1[_g];
+					++_g;
+					if(parameter.__isUniform) {
+						parameter.index = gl.getUniformLocation(this.glProgram,parameter.name);
+					} else {
+						parameter.index = gl.getAttribLocation(this.glProgram,parameter.name);
+					}
+				}
+			}
+		}
+	}
+	,__fieldList: null
+	,thisHasField: function(name) {
+		if(this.__fieldList == null) {
+			this.__fieldList = Reflect.fields(this).concat(Type.getInstanceFields(js_Boot.getClass(this)));
+		}
+		return this.__fieldList.indexOf(name) != -1;
+	}
+	,__processGLData: function(source,storageType) {
+		var position;
+		var name;
+		var type;
+		var regex = storageType == "uniform" ? new EReg("uniform ([A-Za-z0-9]+) ([A-Za-z0-9_]+)","") : new EReg("attribute ([A-Za-z0-9]+) ([A-Za-z0-9_]+)","");
+		var lastMatch = 0;
+		while(regex.matchSub(source,lastMatch)) {
+			type = regex.matched(1);
+			name = regex.matched(2);
+			if(StringTools.startsWith(name,"gl_")) {
+				continue;
+			}
+			var isUniform = storageType == "uniform";
+			if(StringTools.startsWith(type,"sampler")) {
+				var input = new openfl_display_ShaderInput();
+				input.name = name;
+				input.__isUniform = isUniform;
+				this.__inputBitmapData.push(input);
+				switch(name) {
+				case "bitmap":
+					this.__bitmap = input;
+					break;
+				case "openfl_Texture":
+					this.__texture = input;
+					break;
+				default:
+				}
+				this.__data[name] = input;
+				if(this.__isGenerated && this.thisHasField(name)) {
+					Reflect.setProperty(this,name,input);
+				}
+			} else if(!Object.prototype.hasOwnProperty.call(this.__data,name) || Reflect.field(this.__data,name) == null) {
+				var parameterType;
+				switch(type) {
+				case "bool":
+					parameterType = 0;
+					break;
+				case "bvec2":
+					parameterType = 1;
+					break;
+				case "bvec3":
+					parameterType = 2;
+					break;
+				case "bvec4":
+					parameterType = 3;
+					break;
+				case "dvec2":case "vec2":
+					parameterType = 5;
+					break;
+				case "dvec3":case "vec3":
+					parameterType = 6;
+					break;
+				case "double":case "float":
+					parameterType = 4;
+					break;
+				case "ivec3":case "uvec3":
+					parameterType = 10;
+					break;
+				case "ivec4":case "uvec4":
+					parameterType = 11;
+					break;
+				case "mat2":case "mat2x2":
+					parameterType = 12;
+					break;
+				case "mat2x3":
+					parameterType = 13;
+					break;
+				case "mat2x4":
+					parameterType = 14;
+					break;
+				case "mat3x2":
+					parameterType = 15;
+					break;
+				case "mat3":case "mat3x3":
+					parameterType = 16;
+					break;
+				case "mat3x4":
+					parameterType = 17;
+					break;
+				case "mat4":case "mat4x4":
+					parameterType = 20;
+					break;
+				case "mat4x2":
+					parameterType = 18;
+					break;
+				case "mat4x3":
+					parameterType = 19;
+					break;
+				case "int":case "uint":
+					parameterType = 8;
+					break;
+				case "ivec2":case "uvec2":
+					parameterType = 9;
+					break;
+				case "dvec4":case "vec4":
+					parameterType = 7;
+					break;
+				default:
+					parameterType = null;
+				}
+				var length;
+				switch(parameterType) {
+				case 1:case 5:case 9:
+					length = 2;
+					break;
+				case 3:case 7:case 11:case 12:
+					length = 4;
+					break;
+				case 2:case 6:case 10:
+					length = 3;
+					break;
+				case 16:
+					length = 9;
+					break;
+				case 20:
+					length = 16;
+					break;
+				default:
+					length = 1;
+				}
+				var arrayLength;
+				switch(parameterType) {
+				case 12:
+					arrayLength = 2;
+					break;
+				case 16:
+					arrayLength = 3;
+					break;
+				case 20:
+					arrayLength = 4;
+					break;
+				default:
+					arrayLength = 1;
+				}
+				switch(parameterType) {
+				case 0:case 1:case 2:case 3:
+					var parameter = new openfl_display_ShaderParameter();
+					parameter.set_name(name);
+					parameter.type = parameterType;
+					parameter.__arrayLength = arrayLength;
+					parameter.__isBool = true;
+					parameter.__isUniform = isUniform;
+					parameter.__length = length;
+					this.__paramBool.push(parameter);
+					if(name == "openfl_HasColorTransform") {
+						this.__hasColorTransform = parameter;
+					}
+					this.__data[name] = parameter;
+					if(this.__isGenerated && this.thisHasField(name)) {
+						Reflect.setProperty(this,name,parameter);
+					}
+					break;
+				case 8:case 9:case 10:case 11:
+					var parameter1 = new openfl_display_ShaderParameter();
+					parameter1.set_name(name);
+					parameter1.type = parameterType;
+					parameter1.__arrayLength = arrayLength;
+					parameter1.__isInt = true;
+					parameter1.__isUniform = isUniform;
+					parameter1.__length = length;
+					this.__paramInt.push(parameter1);
+					this.__data[name] = parameter1;
+					if(this.__isGenerated && this.thisHasField(name)) {
+						Reflect.setProperty(this,name,parameter1);
+					}
+					break;
+				default:
+					var parameter2 = new openfl_display_ShaderParameter();
+					parameter2.set_name(name);
+					parameter2.type = parameterType;
+					parameter2.__arrayLength = arrayLength;
+					if(arrayLength > 0) {
+						var elements = arrayLength * arrayLength;
+						var array = null;
+						var vector = null;
+						var view = null;
+						var buffer = null;
+						var len = null;
+						var this1;
+						if(elements != null) {
+							this1 = new Float32Array(elements);
+						} else if(array != null) {
+							this1 = new Float32Array(array);
+						} else if(vector != null) {
+							this1 = new Float32Array(vector.__array);
+						} else if(view != null) {
+							this1 = new Float32Array(view);
+						} else if(buffer != null) {
+							if(len == null) {
+								this1 = new Float32Array(buffer,0);
+							} else {
+								this1 = new Float32Array(buffer,0,len);
+							}
+						} else {
+							this1 = null;
+						}
+						parameter2.__uniformMatrix = this1;
+					}
+					parameter2.__isFloat = true;
+					parameter2.__isUniform = isUniform;
+					parameter2.__length = length;
+					this.__paramFloat.push(parameter2);
+					if(StringTools.startsWith(name,"openfl_")) {
+						switch(name) {
+						case "openfl_Alpha":
+							this.__alpha = parameter2;
+							break;
+						case "openfl_ColorMultiplier":
+							this.__colorMultiplier = parameter2;
+							break;
+						case "openfl_ColorOffset":
+							this.__colorOffset = parameter2;
+							break;
+						case "openfl_Matrix":
+							this.__matrix = parameter2;
+							break;
+						case "openfl_Position":
+							this.__position = parameter2;
+							break;
+						case "openfl_TextureCoord":
+							this.__textureCoord = parameter2;
+							break;
+						case "openfl_TextureSize":
+							this.__textureSize = parameter2;
+							break;
+						default:
+						}
+					}
+					this.__data[name] = parameter2;
+					if(this.__isGenerated && this.thisHasField(name)) {
+						Reflect.setProperty(this,name,parameter2);
+					}
+				}
+			}
+			position = regex.matchedPos();
+			lastMatch = position.pos + position.len;
+		}
+	}
+	,setFloat: function(name,value) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null) {
+			haxe_Log.trace("[WARN] Shader float property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 532, className : "shadertoy.FlxRuntimeShader", methodName : "setFloat"});
+			return;
+		}
+		prop.value = [value];
+	}
+	,setFloatArray: function(name,value) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null) {
+			haxe_Log.trace("[WARN] Shader float[] property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 548, className : "shadertoy.FlxRuntimeShader", methodName : "setFloatArray"});
+			return;
+		}
+		prop.value = value;
+	}
+	,setInt: function(name,value) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null) {
+			haxe_Log.trace("[WARN] Shader int property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 564, className : "shadertoy.FlxRuntimeShader", methodName : "setInt"});
+			return;
+		}
+		prop.value = [value];
+	}
+	,setIntArray: function(name,value) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null) {
+			haxe_Log.trace("[WARN] Shader int[] property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 580, className : "shadertoy.FlxRuntimeShader", methodName : "setIntArray"});
+			return;
+		}
+		prop.value = value;
+	}
+	,setBool: function(name,value) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null) {
+			haxe_Log.trace("[WARN] Shader bool property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 596, className : "shadertoy.FlxRuntimeShader", methodName : "setBool"});
+			return;
+		}
+		prop.value = [value];
+	}
+	,setBoolArray: function(name,value) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null) {
+			haxe_Log.trace("[WARN] Shader bool[] property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 612, className : "shadertoy.FlxRuntimeShader", methodName : "setBoolArray"});
+			return;
+		}
+		prop.value = value;
+	}
+	,getFloat: function(name) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null || prop.value.length == 0) {
+			haxe_Log.trace("[WARN] Shader float property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 627, className : "shadertoy.FlxRuntimeShader", methodName : "getFloat"});
+			return null;
+		}
+		return prop.value[0];
+	}
+	,getFloatArray: function(name) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null) {
+			haxe_Log.trace("[WARN] Shader float[] property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 642, className : "shadertoy.FlxRuntimeShader", methodName : "getFloatArray"});
+			return null;
+		}
+		return prop.value;
+	}
+	,getInt: function(name) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null || prop.value.length == 0) {
+			haxe_Log.trace("[WARN] Shader int property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 657, className : "shadertoy.FlxRuntimeShader", methodName : "getInt"});
+			return null;
+		}
+		return prop.value[0];
+	}
+	,getIntArray: function(name) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null) {
+			haxe_Log.trace("[WARN] Shader int[] property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 672, className : "shadertoy.FlxRuntimeShader", methodName : "getIntArray"});
+			return null;
+		}
+		return prop.value;
+	}
+	,getBool: function(name) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null || prop.value.length == 0) {
+			haxe_Log.trace("[WARN] Shader bool property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 687, className : "shadertoy.FlxRuntimeShader", methodName : "getBool"});
+			return null;
+		}
+		return prop.value[0];
+	}
+	,getBoolArray: function(name) {
+		var prop = Reflect.field(this.get_data(),name);
+		if(prop == null) {
+			haxe_Log.trace("[WARN] Shader bool[] property " + name + " not found.",{ fileName : "shadertoy/FlxRuntimeShader.hx", lineNumber : 702, className : "shadertoy.FlxRuntimeShader", methodName : "getBoolArray"});
+			return null;
+		}
+		return prop.value;
+	}
+	,toString: function() {
+		return "FlxRuntimeShader";
+	}
+	,__class__: shadertoy_FlxRuntimeShader
+});
+var shadertoy_FlxShaderToyRuntimeShader = function(fragment,w,h,glVer) {
+	if(glVer == null) {
+		glVer = 120;
+	}
+	this.elapsedtime = 0.0;
+	if(this.__glFragmentSource == null) {
+		this.__glFragmentSource = "\n\t\tvarying float openfl_Alphav;\n\t\tvarying vec4 openfl_ColorMultiplierv;\n\t\tvarying vec4 openfl_ColorOffsetv;\n\t\tvarying vec2 openfl_TextureCoordv;\n\n\t\tuniform bool openfl_HasColorTransform;\n\t\tuniform vec2 openfl_TextureSize;\n\t\tuniform sampler2D bitmap;\n\n\t\tuniform bool hasTransform;\n\t\tuniform bool hasColorTransform;\n\n\t\tvec4 flixel_texture2D(sampler2D bitmap, vec2 coord)\n\t\t{\n\t\t\tvec4 color = texture2D(bitmap, coord);\n\t\t\tif (!hasTransform)\n\t\t\t{\n\t\t\t\treturn color;\n\t\t\t}\n\n\t\t\tif (color.a == 0.0)\n\t\t\t{\n\t\t\t\treturn vec4(0.0, 0.0, 0.0, 0.0);\n\t\t\t}\n\n\t\t\tif (!hasColorTransform)\n\t\t\t{\n\t\t\t\treturn color * openfl_Alphav;\n\t\t\t}\n\n\t\t\tcolor = vec4(color.rgb / color.a, color.a);\n\n\t\t\tmat4 colorMultiplier = mat4(0);\n\t\t\tcolorMultiplier[0][0] = openfl_ColorMultiplierv.x;\n\t\t\tcolorMultiplier[1][1] = openfl_ColorMultiplierv.y;\n\t\t\tcolorMultiplier[2][2] = openfl_ColorMultiplierv.z;\n\t\t\tcolorMultiplier[3][3] = openfl_ColorMultiplierv.w;\n\n\t\t\tcolor = clamp(openfl_ColorOffsetv + (color * colorMultiplier), 0.0, 1.0);\n\n\t\t\tif (color.a > 0.0)\n\t\t\t{\n\t\t\t\treturn vec4(color.rgb * color.a * openfl_Alphav, color.a * openfl_Alphav);\n\t\t\t}\n\t\t\treturn vec4(0.0, 0.0, 0.0, 0.0);\n\t\t}\n\t\n\n\t\t\n\t\tvoid main(void)\n\t\t{\n\t\t\tgl_FragColor = flixel_texture2D(bitmap, openfl_TextureCoordv);\n\t\t}";
+	}
+	if(this.__glVertexSource == null) {
+		this.__glVertexSource = "\n\t\tattribute float openfl_Alpha;\n\t\tattribute vec4 openfl_ColorMultiplier;\n\t\tattribute vec4 openfl_ColorOffset;\n\t\tattribute vec4 openfl_Position;\n\t\tattribute vec2 openfl_TextureCoord;\n\n\t\tvarying float openfl_Alphav;\n\t\tvarying vec4 openfl_ColorMultiplierv;\n\t\tvarying vec4 openfl_ColorOffsetv;\n\t\tvarying vec2 openfl_TextureCoordv;\n\n\t\tuniform mat4 openfl_Matrix;\n\t\tuniform bool openfl_HasColorTransform;\n\t\tuniform vec2 openfl_TextureSize;\n\n\t\t\n\t\tattribute float alpha;\n\t\tattribute vec4 colorMultiplier;\n\t\tattribute vec4 colorOffset;\n\t\tuniform bool hasColorTransform;\n\t\t\n\t\tvoid main(void)\n\t\t{\n\t\t\topenfl_Alphav = openfl_Alpha;\n\t\topenfl_TextureCoordv = openfl_TextureCoord;\n\n\t\tif (openfl_HasColorTransform) {\n\n\t\t\topenfl_ColorMultiplierv = openfl_ColorMultiplier;\n\t\t\topenfl_ColorOffsetv = openfl_ColorOffset / 255.0;\n\n\t\t}\n\n\t\tgl_Position = openfl_Matrix * openfl_Position;\n\n\t\t\t\n\t\t\topenfl_Alphav = openfl_Alpha * alpha;\n\t\t\t\n\t\t\tif (hasColorTransform)\n\t\t\t{\n\t\t\t\topenfl_ColorOffsetv = colorOffset / 255.0;\n\t\t\t\topenfl_ColorMultiplierv = colorMultiplier;\n\t\t\t}\n\t\t}";
+	}
+	this.fragment = fragment != null && fragment.length > 0 ? fragment : shadertoy_FlxShaderToyRuntimeShader.exampleFrag;
+	this.collateShit();
+	shadertoy_FlxRuntimeShader.call(this,this.finalShit,shadertoy_FlxShaderToyRuntimeShader.vert,glVer);
+	this.setFloatArray("iResolution",[w,h,0.0]);
+	this.setFloatArray("iTime",[0.0]);
+	this.setFloatArray("iTimeDelta",[0.0]);
+	this.setFloatArray("iFrame",[0.0]);
+	this.setFloatArray("iMouse",[0.0,0.0,0.0,0.0]);
+	this.__isGenerated = true;
+	this.__initGL();
+};
+$hxClasses["shadertoy.FlxShaderToyRuntimeShader"] = shadertoy_FlxShaderToyRuntimeShader;
+shadertoy_FlxShaderToyRuntimeShader.__name__ = "shadertoy.FlxShaderToyRuntimeShader";
+shadertoy_FlxShaderToyRuntimeShader.__super__ = shadertoy_FlxRuntimeShader;
+shadertoy_FlxShaderToyRuntimeShader.prototype = $extend(shadertoy_FlxRuntimeShader.prototype,{
+	elapsedtime: null
+	,fragment: null
+	,finalShit: null
+	,collateShit: function() {
+		var stringThing_b = "";
+		stringThing_b += Std.string(shadertoy_FlxShaderToyRuntimeShader.headerStuff);
+		stringThing_b += Std.string(this.fragment);
+		stringThing_b += Std.string(shadertoy_FlxShaderToyRuntimeShader.shaderConverter);
+		this.finalShit = stringThing_b;
+	}
+	,update: function(elapsed,mouse) {
+		this.elapsedtime += elapsed;
+		this.setFloatArray("iTime",[this.elapsedtime]);
+		this.setFloatArray("iTimeDelta",[elapsed]);
+	}
+	,__class__: shadertoy_FlxShaderToyRuntimeShader
+});
 var shadertoy_FlxShaderToyShader = function(shaderToyFragment,w,h) {
 	if(shaderToyFragment == null) {
 		shaderToyFragment = "";
@@ -119245,6 +119768,20 @@ openfl_utils__$internal_TouchData.__pool = new lime_utils_ObjectPool(function() 
 },function(data) {
 	data.reset();
 });
+shadertoy_FlxRuntimeShader.BASE_VERTEX_HEADER = "\n\t\t#pragma version\n\n\t\t#pragma precision\n\n\t\tattribute float openfl_Alpha;\n\t\tattribute vec4 openfl_ColorMultiplier;\n\t\tattribute vec4 openfl_ColorOffset;\n\t\tattribute vec4 openfl_Position;\n\t\tattribute vec2 openfl_TextureCoord;\n\t\tvarying float openfl_Alphav;\n\t\tvarying vec4 openfl_ColorMultiplierv;\n\t\tvarying vec4 openfl_ColorOffsetv;\n\t\tvarying vec2 openfl_TextureCoordv;\n\t\tuniform mat4 openfl_Matrix;\n\t\tuniform bool openfl_HasColorTransform;\n\t\tuniform vec2 openfl_TextureSize;\n\t";
+shadertoy_FlxRuntimeShader.BASE_VERTEX_BODY = "\n\t\topenfl_Alphav = openfl_Alpha;\n\t\topenfl_TextureCoordv = openfl_TextureCoord;\n\t\tif (openfl_HasColorTransform) {\n\t\t\topenfl_ColorMultiplierv = openfl_ColorMultiplier;\n\t\t\topenfl_ColorOffsetv = openfl_ColorOffset / 255.0;\n\t\t}\n\t\tgl_Position = openfl_Matrix * openfl_Position;\n\t";
+shadertoy_FlxRuntimeShader.BASE_FRAGMENT_HEADER = "\n\t\t#pragma version\n\n\t\t#pragma precision\n\n\t\tvarying float openfl_Alphav;\n\t\tvarying vec4 openfl_ColorMultiplierv;\n\t\tvarying vec4 openfl_ColorOffsetv;\n\t\tvarying vec2 openfl_TextureCoordv;\n\t\tuniform bool openfl_HasColorTransform;\n\t\tuniform vec2 openfl_TextureSize;\n\t\tuniform sampler2D bitmap;\n\t" + "\n\t\tuniform bool hasTransform;\n\t\tuniform bool hasColorTransform;\n\t\tvec4 flixel_texture2D(sampler2D bitmap, vec2 coord)\n\t\t{\n\t\t\tvec4 color = texture2D(bitmap, coord);\n\t\t\tif (!hasTransform)\n\t\t\t{\n\t\t\t\treturn color;\n\t\t\t}\n\t\t\tif (color.a == 0.0)\n\t\t\t{\n\t\t\t\treturn vec4(0.0, 0.0, 0.0, 0.0);\n\t\t\t}\n\t\t\tif (!hasColorTransform)\n\t\t\t{\n\t\t\t\treturn color * openfl_Alphav;\n\t\t\t}\n\t\t\tcolor = vec4(color.rgb / color.a, color.a);\n\t\t\tmat4 colorMultiplier = mat4(0);\n\t\t\tcolorMultiplier[0][0] = openfl_ColorMultiplierv.x;\n\t\t\tcolorMultiplier[1][1] = openfl_ColorMultiplierv.y;\n\t\t\tcolorMultiplier[2][2] = openfl_ColorMultiplierv.z;\n\t\t\tcolorMultiplier[3][3] = openfl_ColorMultiplierv.w;\n\t\t\tcolor = clamp(openfl_ColorOffsetv + (color * colorMultiplier), 0.0, 1.0);\n\t\t\tif (color.a > 0.0)\n\t\t\t{\n\t\t\t\treturn vec4(color.rgb * color.a * openfl_Alphav, color.a * openfl_Alphav);\n\t\t\t}\n\t\t\treturn vec4(0.0, 0.0, 0.0, 0.0);\n\t\t}\n\t";
+shadertoy_FlxRuntimeShader.BASE_FRAGMENT_BODY = "\n\t\tvec4 color = texture2D (bitmap, openfl_TextureCoordv);\n\t\tif (color.a == 0.0) {\n\t\t\tgl_FragColor = vec4 (0.0, 0.0, 0.0, 0.0);\n\t\t} else if (openfl_HasColorTransform) {\n\t\t\tcolor = vec4 (color.rgb / color.a, color.a);\n\t\t\tmat4 colorMultiplier = mat4 (0);\n\t\t\tcolorMultiplier[0][0] = openfl_ColorMultiplierv.x;\n\t\t\tcolorMultiplier[1][1] = openfl_ColorMultiplierv.y;\n\t\t\tcolorMultiplier[2][2] = openfl_ColorMultiplierv.z;\n\t\t\tcolorMultiplier[3][3] = 1.0; // openfl_ColorMultiplierv.w;\n\t\t\tcolor = clamp (openfl_ColorOffsetv + (color * colorMultiplier), 0.0, 1.0);\n\t\t\tif (color.a > 0.0) {\n\t\t\t\tgl_FragColor = vec4 (color.rgb * color.a * openfl_Alphav, color.a * openfl_Alphav);\n\t\t\t} else {\n\t\t\t\tgl_FragColor = vec4 (0.0, 0.0, 0.0, 0.0);\n\t\t\t}\n\t\t} else {\n\t\t\tgl_FragColor = color * openfl_Alphav;\n\t\t}\n\t";
+shadertoy_FlxRuntimeShader.DEFAULT_FRAGMENT_SOURCE = "\n\t\t#pragma header\n\t\t\n\t\tvoid main(void)\n\t\t{\n\t\t\tgl_FragColor = flixel_texture2D(bitmap, openfl_TextureCoordv);\n\t\t}\n\t";
+shadertoy_FlxRuntimeShader.DEFAULT_VERTEX_SOURCE = "\n\t\t#pragma header\n\t\t\n\t\tattribute float alpha;\n\t\tattribute vec4 colorMultiplier;\n\t\tattribute vec4 colorOffset;\n\t\tuniform bool hasColorTransform;\n\t\t\n\t\tvoid main(void)\n\t\t{\n\t\t\t#pragma body\n\t\t\t\n\t\t\topenfl_Alphav = openfl_Alpha * alpha;\n\t\t\t\n\t\t\tif (hasColorTransform)\n\t\t\t{\n\t\t\t\topenfl_ColorOffsetv = colorOffset / 255.0;\n\t\t\t\topenfl_ColorMultiplierv = colorMultiplier;\n\t\t\t}\n\t\t}\n\t";
+shadertoy_FlxRuntimeShader.PRAGMA_HEADER = "#pragma header";
+shadertoy_FlxRuntimeShader.PRAGMA_BODY = "#pragma body";
+shadertoy_FlxRuntimeShader.PRAGMA_PRECISION = "#pragma precision";
+shadertoy_FlxRuntimeShader.PRAGMA_VERSION = "#pragma version";
+shadertoy_FlxShaderToyRuntimeShader.headerStuff = "\n    #pragma header\n    uniform vec3 iResolution;\n    uniform float iTime;\n    uniform float iTimeDelta;\n    uniform float iFrame;\n    uniform vec4 iMouse;\n    ";
+shadertoy_FlxShaderToyRuntimeShader.exampleFrag = "\n    void mainImage( out vec4 fragColor, in vec2 fragCoord )\n\t{\n\t\t// Normalized pixel coordinates (from 0 to 1)\n\t\tvec2 uv = fragCoord/iResolution.xy;\n\t\t\n\t\t// Time varying pixel color\n\t\tvec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));\n\t\t\n\t\t// Output to screen\n\t\tfragColor = vec4(col,1.0);\n\t}\n    ";
+shadertoy_FlxShaderToyRuntimeShader.shaderConverter = "\n    void main()\n    {\n        // set the color untouched (do nothing), \n        gl_FragColor = flixel_texture2D(bitmap, openfl_TextureCoordv);\n\n        // store coord so it can be altered (openfl_TextureCoordv is read only)\n        vec2 coord = openfl_TextureCoordv;\n        \n        // flip y axis to match shader toy\n        coord.y = 1.0 - coord.y;\n        \n        // convert to shader toy expected fragCoord\n        vec2 fragCoord = (coord * openfl_TextureSize);\n        \n        // then process gl_FragColor with our copy of the shader toy mainImage function\n        mainImage(gl_FragColor, fragCoord);\n    }\n    ";
+shadertoy_FlxShaderToyRuntimeShader.vert = "\n    #pragma header\n\t\t\n    attribute float alpha;\n    attribute vec4 colorMultiplier;\n    attribute vec4 colorOffset;\n    uniform bool hasColorTransform;\n    \n    void main(void)\n    {\n        #pragma body\n        \n        openfl_Alphav = openfl_Alpha * alpha;\n        \n        if (hasColorTransform)\n        {\n            openfl_ColorOffsetv = colorOffset / 255.0;\n            openfl_ColorMultiplierv = colorMultiplier;\n        }\n    }\n    ";
 ApplicationMain.main();
 })(typeof exports != "undefined" ? exports : typeof window != "undefined" ? window : typeof self != "undefined" ? self : this, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
 
