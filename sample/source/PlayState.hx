@@ -41,8 +41,8 @@ class PlayState extends FlxState
 			'Road to Hell' => new FlxShaderToyShader(ShaderStorage.roadToHell[0], shadedSprite.width, shadedSprite.height),
 			'fractal pyramid' => new FlxShaderToyShader(ShaderStorage.pyramids[0], shadedSprite.width, shadedSprite.height),
 			'Seascape' => new FlxShaderToyShader(ShaderStorage.seascape[0], shadedSprite.width, shadedSprite.height),
-			'Pegasus Galaxy' => new FlxShaderToyShader(ShaderStorage.galaxy[0], shadedSprite.width, shadedSprite.height),
-			shaderInfo[0] => new FlxShaderToyRuntimeShader(Assets.getText("assets/data/shader.frag"), shadedSprite.width, shadedSprite.height)
+			'Pegasus Galaxy' => new FlxShaderToyShader(ShaderStorage.galaxy[0], shadedSprite.width, shadedSprite.height) #if !html5 ,
+			shaderInfo[0] => new FlxShaderToyRuntimeShader(Assets.getText("assets/data/shader.frag"), shadedSprite.width, shadedSprite.height) #end
 		];
 		setShader();
 		super.create();
@@ -53,7 +53,7 @@ class PlayState extends FlxState
 		shadedSprite.shader = shaders[thingArray[thingIndex]];
 		shadingText.text = "FlxShaderToyShader-LR demo \nPress LEFT and RIGHT to cycle shaders \nShader: "
 			+ thingArray[thingIndex]
-			+ (thingArray[thingIndex] == shaderInfo[0] ? "\nThis shader is compiled at runtime!\nTo change it, edit shader.frag in assets/data/" : "")
+			#if !html5 + (thingArray[thingIndex] == shaderInfo[0] ? "\nThis shader is compiled at runtime!\nTo change it, edit shader.frag in assets/data/" : "") #emd
 			+ "\n("
 			+ links[thingArray[thingIndex]]
 			+ " || Press ENTER to go to link)";
