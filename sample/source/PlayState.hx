@@ -53,7 +53,7 @@ class PlayState extends FlxState
 		shadedSprite.shader = shaders[thingArray[thingIndex]];
 		shadingText.text = "FlxShaderToyShader-LR demo \nPress LEFT and RIGHT to cycle shaders \nShader: "
 			+ thingArray[thingIndex]
-			#if !html5 + (thingArray[thingIndex] == shaderInfo[0] ? "\nThis shader is compiled at runtime!\nTo change it, edit shader.frag in assets/data/" : "") #emd
+			#if !html5 + (thingArray[thingIndex] == shaderInfo[0] ? "\nThis shader is compiled at runtime!\nTo change it, edit shader.frag in assets/data/" : "") #end
 			+ "\n("
 			+ links[thingArray[thingIndex]]
 			+ " || Press ENTER to go to link)";
