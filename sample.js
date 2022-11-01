@@ -4801,9 +4801,6 @@ PlayState.prototype = $extend(flixel_FlxState.prototype,{
 	,shadingText: null
 	,shaderInfo: null
 	,create: function() {
-		this.shaderInfo = openfl_utils_Assets.getText("assets/data/shaderInfo.txt").split("\n");
-		PlayState.thingArray.push(this.shaderInfo[0]);
-		PlayState.links.h[this.shaderInfo[0]] = this.shaderInfo[1];
 		this.shadedSprite = new flixel_FlxSprite().makeGraphic(flixel_FlxG.width,flixel_FlxG.height,-16777216);
 		var _this = this.shadedSprite;
 		var axes = flixel_util_FlxAxes.XY;
@@ -68781,7 +68778,7 @@ var lime_utils_AssetCache = function() {
 	this.audio = new haxe_ds_StringMap();
 	this.font = new haxe_ds_StringMap();
 	this.image = new haxe_ds_StringMap();
-	this.version = 519035;
+	this.version = 694487;
 };
 $hxClasses["lime.utils.AssetCache"] = lime_utils_AssetCache;
 lime_utils_AssetCache.__name__ = "lime.utils.AssetCache";
