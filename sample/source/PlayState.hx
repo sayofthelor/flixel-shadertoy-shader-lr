@@ -27,9 +27,11 @@ class PlayState extends FlxState
 
 	override public function create()
 	{
+		#if !html5
 		shaderInfo = Assets.getText("assets/data/shaderInfo.txt").split("\n");
 		thingArray.push(shaderInfo[0]);
 		links.set(shaderInfo[0], shaderInfo[1]);
+		#end
 		shadedSprite = new FlxSprite().makeGraphic(FlxG.width, FlxG.height, 0xff000000);
 		shadedSprite.screenCenter();
 		shadingText = new FlxText(10, 10, FlxG.width - 20, "Press LEFT and RIGHT to cycle shaders \nShader: " + thingArray[thingIndex]);
