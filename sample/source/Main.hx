@@ -9,5 +9,6 @@ class Main extends Sprite
 	{
 		super();
 		addChild(new FlxGame(0, 0, PlayState, 1, 60, 60, true));
+		addChild(new openfl.display.FPS(10, 10, 0xffffffff));
 	}
 }
