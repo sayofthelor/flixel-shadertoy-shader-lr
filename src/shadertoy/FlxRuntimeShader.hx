@@ -705,6 +705,38 @@ class FlxRuntimeShader extends FlxShader
 		return prop.value;
 	}
 
+		/**
+	 * Retrieve a bitmap data parameter of the shader.
+	 * @param name The name of the parameter to retrieve.
+	 * @return The value of the parameter.
+	 */
+	 public function getBitmapData(name:String):Null<openfl.display.BitmapData>
+		{
+			var prop:ShaderInput<openfl.display.BitmapData> = Reflect.field(this.data, name);
+			if (prop == null)
+			{
+				trace('[WARN] Shader sampler2D property ${name} not found.');
+				return null;
+			}
+			return prop.input;
+		}
+
+			/**
+	 * Modify a bitmap data parameter of the shader.
+	 * @param name The name of the parameter to modify.
+	 * @param value The new value to use.
+	 */
+	public function setBitmapData(name:String, value:openfl.display.BitmapData):Void
+		{
+			var prop:ShaderInput<openfl.display.BitmapData> = Reflect.field(this.data, name);
+			if (prop == null)
+			{
+				trace('[WARN] Shader sampler2D property ${name} not found.');
+				return;
+			}
+			prop.input = value;
+		}
+
 	public function toString():String
 	{
 		return 'FlxRuntimeShader';
